@@ -12,7 +12,7 @@ export function getTelegramId(): string | null {
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', // Change to your Django backend URL
+  baseURL: 'https://1bb52784807c.ngrok-free.app/api', // Change to your Django backend URL
   headers: {
     'Content-Type': 'application/json',
   },
