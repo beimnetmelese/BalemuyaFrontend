@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   FiTrendingUp,
   FiDollarSign,
   FiUsers,
   FiShoppingCart,
   FiCalendar,
-  FiPieChart,
   FiRefreshCw,
   FiBox,
-  FiStar,
   FiCreditCard,
   FiUserCheck,
-  FiActivity,
 } from "react-icons/fi";
 import { FaTelegram } from "react-icons/fa";
 import {
@@ -27,7 +24,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import { Line, Bar, Doughnut } from "react-chartjs-2";
+import { Line, Doughnut } from "react-chartjs-2";
 import api from "../api/api";
 
 // Register ChartJS components
@@ -40,7 +37,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 );
 
 // TypeScript interfaces based on your Django viewset
@@ -104,7 +101,7 @@ const AdminDashboard: React.FC = () => {
   });
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData | null>(
-    null
+    null,
   );
   const [topData, setTopData] = useState<TopData>({
     range: { from: "", to: "" },
@@ -130,7 +127,7 @@ const AdminDashboard: React.FC = () => {
       // Fetch time series data
       const { data: timeSeries } = await api.get<TimeSeriesData>(
         `/admin/timeseries/`,
-        { params: { from, to, granularity } }
+        { params: { from, to, granularity } },
       );
       setTimeSeriesData(timeSeries);
 
@@ -187,8 +184,8 @@ const AdminDashboard: React.FC = () => {
         return granularity === "day"
           ? date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
           : granularity === "week"
-          ? `Week ${Math.ceil(date.getDate() / 7)}`
-          : date.toLocaleDateString("en-US", { month: "short" });
+            ? `Week ${Math.ceil(date.getDate() / 7)}`
+            : date.toLocaleDateString("en-US", { month: "short" });
       }) || [],
     datasets: [
       {
@@ -204,7 +201,7 @@ const AdminDashboard: React.FC = () => {
         label: "Platform Profit",
         data:
           timeSeriesData?.series.map((item) =>
-            parseFloat(item.platform_profit)
+            parseFloat(item.platform_profit),
           ) || [],
         borderColor: "rgb(236, 72, 153)",
         backgroundColor: "rgba(236, 72, 153, 0.1)",
@@ -215,32 +212,6 @@ const AdminDashboard: React.FC = () => {
   };
 
   // Prepare chart data for top items
-  const topItemsChartData = {
-    labels: topData.items.map((item) =>
-      topData.by === "providers" ? item.provider_name : item.service_title
-    ),
-    datasets: [
-      {
-        label: "Revenue",
-        data: topData.items.map((item) => parseFloat(item.revenue)),
-        backgroundColor: [
-          "rgba(99, 102, 241, 0.8)",
-          "rgba(236, 72, 153, 0.8)",
-          "rgba(249, 115, 22, 0.8)",
-          "rgba(16, 185, 129, 0.8)",
-          "rgba(59, 130, 246, 0.8)",
-        ],
-        borderColor: [
-          "rgb(99, 102, 241)",
-          "rgb(236, 72, 153)",
-          "rgb(249, 115, 22)",
-          "rgb(16, 185, 129)",
-          "rgb(59, 130, 246)",
-        ],
-        borderWidth: 2,
-      },
-    ],
-  };
 
   // Revenue distribution chart data
   const revenueDistributionData = {
@@ -538,7 +509,7 @@ const AdminDashboard: React.FC = () => {
                       callbacks: {
                         label: function (context) {
                           return `${context.label}: ${formatCurrency(
-                            context.raw as number
+                            context.raw as number,
                           )}`;
                         },
                       },
@@ -687,7 +658,7 @@ const AdminDashboard: React.FC = () => {
                     </p>
                     <p className="text-lg font-bold text-indigo-600">{count}</p>
                   </div>
-                )
+                ),
               )
             ) : (
               <p className="text-gray-500">No booking data available</p>
