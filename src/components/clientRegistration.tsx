@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from "react";
+import webApp from "@twa-dev/sdk";
 import { useNavigate } from "react-router-dom";
-import api, { getTelegramId } from "../api/api";
+import api from "../api/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiUser,
@@ -54,28 +55,15 @@ export default function ClientRegistration() {
     setError("");
 
     try {
-      const telegram_id = getTelegramId();
+      // Use @twa-dev/sdk to get Telegram user id
+      const telegramUser = webApp.initDataUnsafe?.user;
+      const telegram_id = telegramUser?.id?.toString() || null;
       if (!telegram_id) {
         setError("Telegram ID not found. Please open in Telegram WebApp.");
         setIsLoading(false);
         return;
       }
-      // Get username from Telegram WebApp if available
-      let username = "no_username";
-      try {
-        // @ts-ignore
-        if (
-          window.Telegram &&
-          window.Telegram.WebApp &&
-          window.Telegram.WebApp.initDataUnsafe &&
-          window.Telegram.WebApp.initDataUnsafe.user
-        ) {
-          // @ts-ignore
-          username =
-            window.Telegram.WebApp.initDataUnsafe.user.username ||
-            "no_username";
-        }
-      } catch (e) {}
+      const username = telegramUser?.username || "no_username";
       const response = await api.post<RegisterResponse>("/accounts/", {
         phone_number: phoneNumber,
         full_name: fullName,
