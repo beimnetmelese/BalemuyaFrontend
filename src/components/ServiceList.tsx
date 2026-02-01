@@ -33,6 +33,7 @@ export default function ServiceList() {
     category: "",
     availableOnly: false,
   });
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch services
   useEffect(() => {
@@ -42,9 +43,27 @@ export default function ServiceList() {
         const res = await api.get("/services/", {
           params: { search }, // Send search term to backend
         });
-        setServices(res.data); // Keep services in state for filtering
-      } catch (err) {
+        // Defensive: ensure data is an array
+        if (Array.isArray(res.data)) {
+          setServices(res.data);
+        } else if (Array.isArray(res.data?.results)) {
+          setServices(res.data.results);
+        } else {
+          setServices([]);
+          setError(
+            typeof res.data === "object" && res.data !== null && res.data.detail
+              ? res.data.detail
+              : "Unexpected response from server.",
+          );
+        }
+      } catch (err: any) {
         console.error(err);
+        // Add error UI state
+        setError(
+          err?.response?.data?.detail ||
+            err?.message ||
+            "Failed to load services. Please try again later.",
+        );
       } finally {
         setLoading(false);
       }
@@ -294,7 +313,35 @@ export default function ServiceList() {
 
       {/* Services Grid */}
       <div className="max-w-6xl mx-auto">
-        {loading ? (
+        {error ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <div className="mx-auto w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-4">
+              <FiX className="text-3xl text-red-500" />
+            </div>
+            <h3 className="text-lg font-medium text-red-700">{error}</h3>
+            <button
+              onClick={() => {
+                setError(null);
+                setSearch("");
+                setFilters({
+                  location: "",
+                  minRating: 0,
+                  minPrice: 0,
+                  maxPrice: Infinity,
+                  category: "",
+                  availableOnly: false,
+                });
+              }}
+              className="mt-4 px-4 py-2 bg-indigo-500 text-white rounded-full text-sm font-medium"
+            >
+              Try Again
+            </button>
+          </motion.div>
+        ) : loading ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array(6)
               .fill(0)
