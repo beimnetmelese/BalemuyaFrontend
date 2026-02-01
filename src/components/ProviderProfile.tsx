@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api, { getTelegramId } from "../api/api";
+import api from "../api/api";
+import webApp from "@twa-dev/sdk";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiEdit,
@@ -60,8 +61,8 @@ const Profile: React.FC = () => {
     "services",
   );
 
-  // Get Telegram ID from WebApp
-  const telegram_id = getTelegramId();
+  // Get Telegram ID from Telegram WebApp SDK
+  const telegram_id = webApp.initDataUnsafe?.user?.id?.toString() || "";
 
   useEffect(() => {
     fetchData();

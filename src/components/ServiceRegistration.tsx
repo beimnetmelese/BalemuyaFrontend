@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import webApp from "@twa-dev/sdk";
 import api from "../api/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -42,10 +43,9 @@ export default function ProviderOnboarding() {
     return () => URL.revokeObjectURL(objectUrl);
   }, [image]);
 
-  // Grab Telegram ID
+  // Grab Telegram ID using @twa-dev/sdk
   useEffect(() => {
-    const tg = (window as any).Telegram?.WebApp;
-    const user = tg?.initDataUnsafe?.user;
+    const user = webApp.initDataUnsafe?.user;
     if (user?.id) setTelegramId(String(user.id));
     if (user?.username) setUsername(user.username);
   }, []);
@@ -123,7 +123,8 @@ export default function ProviderOnboarding() {
     } catch (err: any) {
       console.error(err);
       setError(
-        err?.response?.data?.detail || "Something went wrong. Please try again."
+        err?.response?.data?.detail ||
+          "Something went wrong. Please try again.",
       );
     } finally {
       setLoading(false);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import api, { getTelegramId } from "../api/api";
+import api from "../api/api";
+import webApp from "@twa-dev/sdk";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -88,7 +89,7 @@ export default function ClientBookings() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const telegram_id = getTelegramId();
+      const telegram_id = webApp.initDataUnsafe?.user?.id?.toString() || "";
       if (!telegram_id) throw new Error("Telegram ID not found");
       const res = await api.get(`/bookings/?telegram_id=${telegram_id}`);
       setBookings(res.data);

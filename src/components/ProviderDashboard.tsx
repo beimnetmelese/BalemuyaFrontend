@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api, { getTelegramId } from "../api/api";
+import api from "../api/api";
+import webApp from "@twa-dev/sdk";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiCalendar,
@@ -62,6 +63,8 @@ const ProviderDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [showContact, setShowContact] = useState(false);
   const [contactBooking, setContactBooking] = useState<Booking | null>(null);
+  const getTelegramId = () => webApp.initDataUnsafe?.user?.id?.toString() || "";
+
   const fetchBookings = () => {
     setLoading(true);
     const telegram_id = getTelegramId();
