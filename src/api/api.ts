@@ -9,12 +9,13 @@ export function getTelegramId(): string | null {
   } catch (e) {}
   return null;
 }
-import axios from "axios";
+import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: 'https://balemuyabackend.onrender.com/api', // Change to your Django backend URL
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
+
   },
 });
 
