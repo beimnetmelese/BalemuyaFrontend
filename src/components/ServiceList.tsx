@@ -39,10 +39,12 @@ export default function ServiceList() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
+        console.log("[ServiceList] Fetching services...", { search });
         setLoading(true);
         const res = await api.get("/services/", {
           params: { search }, // Send search term to backend
         });
+        console.log("[ServiceList] Response from /services/:", res);
         // Defensive: ensure data is an array
         if (Array.isArray(res.data)) {
           setServices(res.data);
@@ -57,7 +59,7 @@ export default function ServiceList() {
           );
         }
       } catch (err: any) {
-        console.error(err);
+        console.error("[ServiceList] Error fetching services:", err);
         // Add error UI state
         setError(
           err?.response?.data?.detail ||

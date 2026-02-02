@@ -9,12 +9,12 @@ export function getTelegramId(): string | null {
   } catch (e) {}
   return null;
 }
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'https://07824a5113c1.ngrok-free.app/api', // Change to your Django backend URL
+  baseURL: "/api",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
