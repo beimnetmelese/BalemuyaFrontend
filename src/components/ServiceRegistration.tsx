@@ -62,6 +62,31 @@ export default function ProviderOnboarding() {
     })();
   }, []);
 
+  // Check if user already exists
+  useEffect(() => {
+    if (!telegramId) return;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await api.get(`/accounts/${telegramId}/`);
+        // If user exists, skip step 0 and go to service registration only
+        if (res.data && res.data.telegram_id) {
+          setFullName(res.data.full_name || "");
+          setUsername(res.data.username || "");
+          setPhoneNumber(res.data.phone_number || "");
+          setActiveStep(1); // Only show service registration
+        }
+      } catch (err: any) {
+        // If not found, do nothing (user will register as usual)
+        if (err?.response?.status !== 404) {
+          setError("Failed to check user account. Please try again.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [telegramId]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
