@@ -109,6 +109,7 @@ export default function ServiceDetail() {
     try {
       setLoading(true);
       const telegram_id = webApp.initDataUnsafe?.user?.id?.toString() || null;
+      console.log("Telegram ID:", telegram_id);
       await api.post(`/bookings/`, {
         service: service?.id,
         scheduled_date: selectedDate,
