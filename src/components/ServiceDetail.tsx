@@ -110,13 +110,15 @@ export default function ServiceDetail() {
       setLoading(true);
       const telegram_id = webApp.initDataUnsafe?.user?.id?.toString() || null;
       console.log("Telegram ID:", telegram_id);
-      await api.post(`/bookings/`, {
-        service: service?.id,
-        scheduled_date: selectedDate,
-        price: service?.price,
-        note: note,
-        telegram_id, // Send Telegram ID as part of booking data
-      });
+      await api.post(
+        `/bookings/?telegram_id=${encodeURIComponent(telegram_id ?? "")}`,
+        {
+          service: service?.id,
+          scheduled_date: selectedDate,
+          price: service?.price,
+          note: note,
+        },
+      );
       setBookingSuccess(true);
       setTimeout(() => {
         setShowBookingModal(false);
