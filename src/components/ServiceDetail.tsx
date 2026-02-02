@@ -13,6 +13,7 @@ import {
 } from "react-icons/fi";
 import { FaTelegram, FaWhatsapp } from "react-icons/fa";
 import { IoCheckmarkDone } from "react-icons/io5";
+import webApp from "@twa-dev/sdk";
 
 interface Review {
   id: number;
@@ -107,11 +108,13 @@ export default function ServiceDetail() {
   const handleBooking = async () => {
     try {
       setLoading(true);
+      const telegram_id = webApp.initDataUnsafe?.user?.id?.toString() || null;
       await api.post(`/bookings/`, {
         service: service?.id,
         scheduled_date: selectedDate,
         price: service?.price,
         note: note,
+        telegram_id, // Send Telegram ID as part of booking data
       });
       setBookingSuccess(true);
       setTimeout(() => {
@@ -477,7 +480,7 @@ export default function ServiceDetail() {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
-                                }
+                                },
                               )}
                             </p>
                           )}
@@ -511,8 +514,8 @@ export default function ServiceDetail() {
                             loading
                               ? "bg-indigo-400"
                               : !selectedDate
-                              ? "bg-gray-400"
-                              : "bg-indigo-500"
+                                ? "bg-gray-400"
+                                : "bg-indigo-500"
                           }`}
                         >
                           {loading ? "Processing..." : "Confirm Booking"}
