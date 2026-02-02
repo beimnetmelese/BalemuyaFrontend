@@ -128,12 +128,16 @@ export default function ClientBookings() {
     if (!reviewBooking || !reviewRating) return;
     setReviewLoading(true);
     try {
-      await api.post(`/services/reviews/`, {
-        service: reviewBooking.service.id,
-        rating: reviewRating,
-        reviewer: reviewBooking.customer.id, // assumes customer.id is user id
-        comment: reviewComment,
-      });
+      const reviewer_telegram_id =
+        webApp.initDataUnsafe?.user?.id?.toString() || null;
+      await api.post(
+        `/services/reviews/?reviewer_telegram_id=${encodeURIComponent(reviewer_telegram_id ?? "")}`,
+        {
+          service: reviewBooking.service.id,
+          rating: reviewRating,
+          comment: reviewComment,
+        },
+      );
       toast.success("Thank you for your review!");
       setShowReview(false);
       setReviewBooking(null);

@@ -89,12 +89,16 @@ export default function ServiceDetail() {
     if (!newRating) return;
     try {
       setLoading(true);
-      await api.post(`/services/reviews/`, {
-        service: service?.id,
-        rating: newRating,
-        reviewer: 1,
-        comment: newComment,
-      });
+      const reviewer_telegram_id =
+        webApp.initDataUnsafe?.user?.id?.toString() || null;
+      await api.post(
+        `/services/reviews/?reviewer_telegram_id=${encodeURIComponent(reviewer_telegram_id ?? "")}`,
+        {
+          service: service?.id,
+          rating: newRating,
+          comment: newComment,
+        },
+      );
       setNewRating(0);
       setNewComment("");
       fetchService(); // refresh
