@@ -1,6 +1,5 @@
-import { useState, ChangeEvent } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import webApp from "@twa-dev/sdk";
-import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -38,12 +37,38 @@ interface RegisterResponse {
 }
 
 export default function ClientRegistration() {
+  const [telegramId, setTelegramId] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [fullName, setFullName] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const navigate = useNavigate();
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [registeredMessage, setRegisteredMessage] = useState(
+    "You already have an account.",
+  );
+
+  useEffect(() => {
+    const user = webApp.initDataUnsafe?.user;
+    if (user?.id) setTelegramId(String(user.id));
+  }, []);
+
+  useEffect(() => {
+    if (!telegramId) return;
+    (async () => {
+      try {
+        const res = await api.get(`/accounts/${telegramId}/`);
+        if (res.data && res.data.telegram_id) {
+          setRegisteredMessage("You already have an account.");
+          setAlreadyRegistered(true);
+        }
+      } catch (err: any) {
+        if (err?.response?.status !== 404) {
+          setError("Failed to check user account. Please try again.");
+        }
+      }
+    })();
+  }, [telegramId]);
 
   const handleRegister = async () => {
     if (!phoneNumber || !fullName) {
@@ -74,7 +99,6 @@ export default function ClientRegistration() {
 
       console.log("Registration successful:", response.data);
       setSuccess(true);
-      setTimeout(() => navigate("/welcome"), 2000);
     } catch (err: any) {
       console.error(err);
       setError(
@@ -111,7 +135,7 @@ export default function ClientRegistration() {
         className="w-full max-w-md relative z-10"
       >
         <AnimatePresence mode="wait">
-          {success ? (
+          {success || alreadyRegistered ? (
             <motion.div
               key="success"
               initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
@@ -149,11 +173,12 @@ export default function ClientRegistration() {
                   transition={{ delay: 0.3 }}
                 >
                   <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent mb-3">
-                    Welcome to Balemuya!
+                    Completed
                   </h2>
                   <p className="text-slate-600 mb-8 font-medium">
-                    Your registration was successful. Get ready for an amazing
-                    experience!
+                    {alreadyRegistered
+                      ? registeredMessage
+                      : "Your registration was successful."}
                   </p>
                 </motion.div>
 
@@ -198,14 +223,15 @@ export default function ClientRegistration() {
                   <div className="h-full bg-gradient-to-r from-emerald-500 via-cyan-500 to-sky-500 rounded-full"></div>
                 </motion.div>
 
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                <motion.button
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1 }}
-                  className="text-slate-500 text-sm mt-4"
+                  className="mt-6 w-full rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
+                  onClick={() => (window as any).Telegram?.WebApp?.close()}
                 >
-                  Redirecting to your dashboard...
-                </motion.p>
+                  Close
+                </motion.button>
               </div>
             </motion.div>
           ) : (

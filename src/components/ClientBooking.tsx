@@ -35,6 +35,13 @@ interface Booking {
     full_name: string;
     phone_number: string;
   };
+  provider?: {
+    id: number;
+    telegram_id: string;
+    username: string;
+    full_name: string;
+    phone_number: string;
+  };
   service: {
     id: number;
     title: string;
@@ -291,19 +298,20 @@ export default function ClientBookings() {
                 <div className="mb-4">
                   <div className="font-medium text-gray-900 flex items-center mb-2">
                     <FiUser className="mr-2" />
-                    {contactBooking.service.provider_name}
+                    {contactBooking.provider?.full_name ||
+                      contactBooking.service.provider_name}
                   </div>
                   <div className="text-gray-700 mb-1">
                     <span className="font-semibold">Phone:</span>{" "}
-                    {contactBooking.customer.phone_number || "N/A"}
+                    {contactBooking.provider?.phone_number || "N/A"}
                   </div>
                   <div className="text-gray-700 mb-1">
                     <span className="font-semibold">Telegram:</span>{" "}
-                    {contactBooking.customer.telegram_id || "N/A"}
+                    {contactBooking.provider?.telegram_id || "N/A"}
                   </div>
                   <div className="text-gray-700">
                     <span className="font-semibold">Username:</span>{" "}
-                    {contactBooking.customer.username || "N/A"}
+                    {contactBooking.provider?.username || "N/A"}
                   </div>
                 </div>
                 <button

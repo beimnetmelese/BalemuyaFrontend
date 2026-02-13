@@ -18,6 +18,10 @@ export default function ProviderOnboarding() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [registeredMessage, setRegisteredMessage] = useState(
+    "You already have an account",
+  );
   const [activeStep, setActiveStep] = useState(0);
 
   // Form states
@@ -62,19 +66,34 @@ export default function ProviderOnboarding() {
     })();
   }, []);
 
-  // Check if user already exists
+  // Check if user already exists and whether they already have a service
   useEffect(() => {
     if (!telegramId) return;
     (async () => {
       setLoading(true);
       try {
-        const res = await api.get(`/accounts/${telegramId}/`);
+        const [accountRes, servicesRes] = await Promise.all([
+          api.get(`/accounts/${telegramId}/`),
+          api.get(`/services/`, {
+            params: { provider_telegram_id: telegramId },
+          }),
+        ]);
+
         // If user exists, skip step 0 and go to service registration only
-        if (res.data && res.data.telegram_id) {
-          setFullName(res.data.full_name || "");
-          setUsername(res.data.username || "");
-          setPhoneNumber(res.data.phone_number || "");
+        if (accountRes.data && accountRes.data.telegram_id) {
+          setFullName(accountRes.data.full_name || "");
+          setUsername(accountRes.data.username || "");
+          setPhoneNumber(accountRes.data.phone_number || "");
           setActiveStep(1); // Only show service registration
+        }
+
+        const existingServices = Array.isArray(servicesRes.data)
+          ? servicesRes.data
+          : servicesRes.data?.results || [];
+
+        if (existingServices.length > 0) {
+          setRegisteredMessage("You already have a service registered.");
+          setAlreadyRegistered(true);
         }
       } catch (err: any) {
         // If not found, do nothing (user will register as usual)
@@ -241,7 +260,27 @@ export default function ProviderOnboarding() {
           )}
         </AnimatePresence>
 
-        {success ? (
+        {alreadyRegistered ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="p-6 text-center"
+          >
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center">
+                <FiCheckCircle className="text-indigo-500 text-4xl" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Completed</h2>
+            <p className="text-gray-600 mb-6">{registeredMessage}</p>
+            <button
+              onClick={() => (window as any).Telegram?.WebApp?.close()}
+              className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 transition-opacity"
+            >
+              Close
+            </button>
+          </motion.div>
+        ) : success ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
