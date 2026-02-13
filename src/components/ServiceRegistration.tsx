@@ -280,10 +280,12 @@ export default function ProviderOnboarding() {
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Completed</h2>
             <p className="text-gray-600 mb-6">{registeredMessage}</p>
             <button
-              onClick={() => (window as any).Telegram?.WebApp?.close()}
+              onClick={() =>
+                window.open("https://t.me/BalemuyaaBot?start=1", "_blank")
+              }
               className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 transition-opacity"
             >
-              Close
+              Continue in Bot
             </button>
           </motion.div>
         ) : success ? (
@@ -304,10 +306,12 @@ export default function ProviderOnboarding() {
               Your provider profile and service have been successfully created.
             </p>
             <button
-              onClick={() => (window as any).Telegram?.WebApp?.close()}
+              onClick={() =>
+                window.open("https://t.me/BalemuyaaBot?start=1", "_blank")
+              }
               className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 transition-opacity"
             >
-              Close & Return
+              Continue in Bot
             </button>
           </motion.div>
         ) : (

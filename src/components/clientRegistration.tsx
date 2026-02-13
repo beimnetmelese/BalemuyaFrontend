@@ -230,9 +230,11 @@ export default function ClientRegistration() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1 }}
                   className="mt-6 w-full rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
-                  onClick={() => (window as any).Telegram?.WebApp?.close()}
+                  onClick={() =>
+                    window.open("https://t.me/BalemuyaaBot?start=1", "_blank")
+                  }
                 >
-                  Close
+                  Continue in Bot
                 </motion.button>
               </div>
             </motion.div>
