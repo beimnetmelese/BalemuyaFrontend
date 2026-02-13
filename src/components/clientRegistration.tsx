@@ -115,7 +115,9 @@ export default function ClientRegistration() {
   };
 
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPhoneNumber(e.target.value);
+    const raw = e.target.value;
+    const cleaned = raw.replace(/[^0-9+\s-]/g, "");
+    setPhoneNumber(cleaned);
     if (error) setError("");
   };
 
@@ -348,6 +350,8 @@ export default function ClientRegistration() {
                         </div>
                         <input
                           type="tel"
+                          inputMode="tel"
+                          pattern="[0-9+\s-]*"
                           placeholder="Enter your phone number"
                           value={phoneNumber}
                           onChange={handlePhoneChange}

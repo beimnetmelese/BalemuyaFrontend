@@ -36,6 +36,12 @@ export default function ProviderOnboarding() {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    const cleaned = raw.replace(/[^0-9+\s-]/g, "");
+    setPhoneNumber(cleaned);
+  };
+
   // Handle image preview
   useEffect(() => {
     if (!image) {
@@ -348,8 +354,11 @@ export default function ProviderOnboarding() {
                           Phone Number *
                         </label>
                         <input
+                          type="tel"
+                          inputMode="tel"
+                          pattern="[0-9+\s-]*"
                           value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          onChange={handlePhoneChange}
                           className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 outline-none transition"
                           placeholder="+2519…"
                         />
